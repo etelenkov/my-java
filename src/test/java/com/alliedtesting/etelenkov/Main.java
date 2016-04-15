@@ -59,7 +59,7 @@ public class Main {
 
             @Override
             public void close() throws Exception {
-                status = "Closed";
+                status = "Closed!";
                 //System.out.println("exceptionTest: AutoCloseable closed");
                 throwErr();
                 printStatus();
