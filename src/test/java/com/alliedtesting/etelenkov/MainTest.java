@@ -11,7 +11,7 @@ import static java.util.Arrays.asList;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
-public class Main {
+public class MainTest {
     public static void main(String... args) {
         ArrayList<Integer> arrListI = new ArrayList<>();
         arrListI.add(15);
