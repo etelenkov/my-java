@@ -219,7 +219,6 @@ public class MainTest {
 
     @Test
     public void divTest() {
-        Assert.fail("me failed");
         int a = 10 / 2;
         assertEquals(a, 5, "Div is not OK");
     }
