@@ -1,7 +1,9 @@
 package com.alliedtesting.etelenkov;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Helper {
     public static int sum(int a, int b) {
@@ -40,5 +42,26 @@ public class Helper {
         // true - if o1 > o2
         // false - if o1 <= o2
         boolean compare(T o1, T o2);
+    }
+
+    public static <T> boolean PermutedCollections(Iterable<T> it1, Iterable<T> arr2) {
+
+        Map<T, Integer> map1 = new HashMap<>();
+        Map<T, Integer> map2 = new HashMap<>();
+
+        for (T t : it1) {
+            Integer rep = map1.get(t);
+            map1.put(t, (rep == null ? 1 : ++rep));
+        }
+
+        for (T t : arr2) {
+            Integer rep = map2.get(t);
+            map2.put(t, (rep == null ? 1 : ++rep));
+        }
+
+//        System.out.println(map1.entrySet());
+//        System.out.println(map2.entrySet());
+
+        return map1.equals(map2);
     }
 }

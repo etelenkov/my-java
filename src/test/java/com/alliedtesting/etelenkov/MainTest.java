@@ -1,11 +1,9 @@
 package com.alliedtesting.etelenkov;
 
-import org.testng.Assert;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 import static org.testng.Assert.assertEquals;
@@ -13,40 +11,185 @@ import static org.testng.Assert.fail;
 
 public class MainTest {
     public static void main(String... args) {
-        ArrayList<Integer> arrListI = new ArrayList<>();
-        arrListI.add(15);
-        arrListI.add(25);
-        arrListI.add(35);
+//        ArrayList<Integer> arrListI = new ArrayList<>();
+//        arrListI.add(15);
+//        arrListI.add(25);
+//        arrListI.add(35);
+//
+//        ArrayList<String> arrListS = new ArrayList<>();
+//        arrListS.add("45");
+//        arrListS.add("55");
+//        arrListS.add("65");
+//
+//        List<? extends Object> list1 = arrListI;
+//        List<?> list2 = arrListS;
+//
+//        printList(list1);
+//        printList(list2);
+//
+//        List<?> list3 = Arrays.asList(15, 15.15, 20);
+//        printList(list3);
+//
+//        Integer[] list4 = {1, 2, 3};
+//        swapInArray(list4, 0, 1);
+//        System.out.println(Arrays.asList(list4));
+//
+//        String[] list5 = {"A", "B", "C"};
+//        swapInArray(list5, 2, 1);
+//        System.out.println(Arrays.asList(list5));
+//
+//        List<String> ls = new ArrayList<>();
+//        ls.add("1");
+//        append(ls);
+//        //append(ls, String.class);
+//        System.out.println(Arrays.asList(ls) + "\n---");
+//
+//        exceptionTest();
 
-        ArrayList<String> arrListS = new ArrayList<>();
-        arrListS.add("45");
-        arrListS.add("55");
-        arrListS.add("65");
+//        Set<String> setS1 = new LinkedHashSet<>();
+//        setS1.add("E");
+//        setS1.add("D");
+//        setS1.add("A");
+//        setS1.add("B");
+//        setS1.add("C");
+//        setS1.add("C");
+//        System.out.println("setS1: " + setS1);
+//        Iterator<String> it = setS1.iterator();
+//        while (it.hasNext()) System.out.print(" " + it.next());
+//
+//
+//
+//        List<String> listS1 = new ArrayList<>();
+//        listS1.add("E");
+//        listS1.add("D");
+//        listS1.add("A");
+//        listS1.add("B");
+//        listS1.add("C");
+//        System.out.println("listS1: " + listS1);
+//
+//
+//        System.out.println("Равны? : " + setS1.equals(listS1));
+//
+//        Collections.sort(listS1);
+//        ListIterator<String> iter = listS1.listIterator();
+//
+////        System.out.println("--- 0 ---");
+////        System.out.println("hasNext: " + iter.hasNext() + " nextIndex: " + iter.nextIndex());
+////        System.out.println("hasPrevious: " + iter.hasPrevious() + " previousIndex: " + iter.previousIndex());
+////
+////        iter.next();
+////        iter.next();
+////        iter.next();
+////        System.out.println("--- 3 ---");
+////        System.out.println("hasNext: " + iter.hasNext() + " nextIndex: " + iter.nextIndex());
+////        System.out.println("hasPrevious: " + iter.hasPrevious() + " previousIndex: " + iter.previousIndex());
+////
+////        iter.previous();
+////        iter.previous();
+////        System.out.println("--- 1 ---");
+////        System.out.println("hasNext: " + iter.hasNext() + " nextIndex: " + iter.nextIndex());
+////        System.out.println("hasPrevious: " + iter.hasPrevious() + " previousIndex: " + iter.previousIndex());
+//
+//        boolean finished = false;
+//        boolean forward = true;
+//        while (!finished) {
+//            if (forward) {
+//                if (iter.hasNext()) System.out.println(iter.next());
+//                else forward = false;
+//            } else {
+//                if (iter.hasPrevious()) System.out.println(iter.previous());
+//                else finished = true;
+//            }
+//        }
 
-        List<? extends Object> list1 = arrListI;
-        List<?> list2 = arrListS;
+        int total = 100;
+        String[] s = new String[total];
+        for (int i = 0; i < total; i++) {
+            s[i] = "String_" + (int) (Math.random() * 10);
+        }
+//        s[0] = "String32";
+//        s[1] = "String14";
+//        s[2] = "String23";
+//        s[3] = "String14";
+//        s[4] = "String41";
+//        s[5] = "String23";
+//        s[6] = "String14";
+//        s[7] = "String14";
+//        s[8] = "String32";
+//        s[9] = "String23";
+        MapExample(s);
 
-        printList(list1);
-        printList(list2);
+        //Collections
+//        Name nameArray[] = {
+//                new Name("John", "Smith"),
+//                new Name("Karl", "Ng"),
+//                new Name("Jeff", "Smith"),
+//                new Name("Tom", "Rich")
+//        };
+//        Set<Name> ts = new TreeSet<>();
+//        Collections.sort(ts);
 
-        List<?> list3 = Arrays.asList(15, 15.15, 20);
-        printList(list3);
+    }
 
-        Integer[] list4 = {1, 2, 3};
-        swapInArray(list4, 0, 1);
-        System.out.println(Arrays.asList(list4));
+//    class Employee implements Comparable<Employee> {
+//        public Name name()     { ... }
+//        public int number()    { ... }
+//        public Date hireDate() { ... }
+//        ...
+//    }
 
-        String[] list5 = {"A", "B", "C"};
-        swapInArray(list5, 2, 1);
-        System.out.println(Arrays.asList(list5));
+    class Name implements Comparable<Name> {
+        private final String firstName, lastName;
 
-        List<String> ls = new ArrayList<>();
-        ls.add("1");
-        append(ls);
-        //append(ls, String.class);
-        System.out.println(Arrays.asList(ls) + "\n---");
+        public Name(String firstName, String lastName) {
+            if (firstName == null || lastName == null)
+                throw new NullPointerException();
+            this.firstName = firstName;
+            this.lastName = lastName;
+        }
 
-        exceptionTest();
+        public String firstName() { return firstName; }
+        public String lastName()  { return lastName;  }
+
+        public boolean equals(Object o) {
+            if (!(o instanceof Name))
+                return false;
+            Name n = (Name) o;
+            return n.firstName.equals(firstName) && n.lastName.equals(lastName);
+        }
+
+        public int hashCode() {
+            return 31*firstName.hashCode() + lastName.hashCode();
+        }
+
+        public String toString() {
+            return firstName + " " + lastName;
+        }
+
+        public int compareTo(Name n) {
+            int lastCmp = lastName.compareTo(n.lastName);
+            return (lastCmp != 0 ? lastCmp : firstName.compareTo(n.firstName));
+        }
+    }
+
+    public static void MapExample(String... strings) {
+
+        Map<String, Integer> map = new HashMap<>();
+
+        for (String s : strings) {
+            // Get repeats of the string
+            Integer repeats = map.get(s);
+            if (repeats == null) repeats = 1;
+            else repeats++;
+            // add new repeat value for the string key
+            map.put(s, repeats);
+        }
+
+        // Print map
+        for (Map.Entry<String, Integer> kv : map.entrySet()) {
+            System.out.println(kv.getKey() + " repeats: " + kv.getValue());
+        }
+
     }
 
     public static void exceptionTest() {
@@ -57,20 +200,20 @@ public class MainTest {
 
             private String status = "";
 
-            @Override
-            public void close() throws Exception {
-                status = "Closed!";
-                //System.out.println("exceptionTest: AutoCloseable closed");
-                throwErr();
-                printStatus();
-            }
-
             AT() throws Exception, Error {
                 status = "Created";
                 //System.out.println("exceptionTest: AutoCloseable created");
                 printStatus();
                 //throwEx();
                 throwErr();
+            }
+
+            @Override
+            public void close() throws Exception {
+                status = "Closed!";
+                //System.out.println("exceptionTest: AutoCloseable closed");
+                throwErr();
+                printStatus();
             }
 
             void throwEx() throws Exception {
@@ -92,6 +235,7 @@ public class MainTest {
             void printStatus() {
                 System.out.println("exceptionTest: AutoCloseable: " + status);
             }
+
         }
 
         boolean finished = false;
@@ -152,6 +296,19 @@ public class MainTest {
         System.out.println();
     }
 
+    public static <T extends Throwable> void unchecked(Throwable t) throws T {
+//        IllegalArgumentException i;// = new IllegalArgumentException();
+//        RuntimeException r = new RuntimeException();
+//        Exception e = new Exception();
+//
+//        i = e;
+//        e = r;
+
+        //IllegalArgumentException e = (IllegalArgumentException) new Exception();
+
+        throw (T) t;
+    }
+
     @Test
     public void sortIntArrayTest() {
         ArrayList<Integer> arr = new ArrayList<>(asList(5, 4, 3, 2, 1));
@@ -181,7 +338,7 @@ public class MainTest {
     @Test
     public void sortUnstableStringArrayCaseNonSensitiveTest() {
         ArrayList<String> arr = new ArrayList<>(asList("C", "B", "A", "c", "b", "a"));
-        ArrayList<String> arrInitial = new ArrayList<>(asList("C", "B", "A", "c", "b", "a"));
+        ArrayList<String> exp = new ArrayList<>(asList("A", "a", "B", "b", "C", "c"));
         Helper.Comparator<String> comparator = (a, b) -> a.compareToIgnoreCase(b) > 0;
         Helper.sortUnstable(arr, comparator);
 
@@ -192,7 +349,49 @@ public class MainTest {
             }
         }
 
-        // todo: check that the result is permutation of the initial list. Use Maps.
+        if (!Helper.PermutedCollections(arr, exp)) {
+            fail("Array: { " + arr.toString() + " } is not permutation of expected array: { " +
+                    exp.toString() + " }. So, the sort operation FAILED!");
+        }
+
+    }
+
+    // Iterable it1, Iterable it2, boolean result
+
+    @Test(dataProvider = "PermutedCollectionsTest")
+    public <T> void PermutedCollectionsTest(Iterable<T> it1, Iterable<T> it2, boolean exp) {
+        assertEquals(Helper.PermutedCollections(it1, it2), exp,
+                "PermutedCollections(...) FAILED for: \n" +
+                        "\tIterable it1: { " + it1.toString() + " }\n" +
+                        "\tIterable it2: { " + it2.toString() + " }\n" +
+                        "The result should be: " + exp +
+                        " (true - permuted; false - not permuted collections");
+    }
+
+    /**
+     * DataProvider "PermutedCollectionsTest":
+     * 1 - Iterable 1
+     * 2 - Iterable 2
+     * 3 - boolean result
+     *
+     * @return Object[][] DataProvider
+     */
+    @DataProvider(name = "PermutedCollectionsTest")
+    public Object[][] createData1() {
+        return new Object[][]{
+                // --- 1 ---
+                {asList("C", "B", "A", "c", "b", "a"),
+                        asList("A", "a", "B", "b", "C", "c"),
+                        true},
+                // --- 2 ---
+                {asList("C", "B", "A", "c", "b", "a"),
+                        asList("A", "A", "B", "b", "C", "c"),
+                        false},
+                // --- 3 ---
+                {asList(),
+                        asList(),
+                        true},
+        };
     }
 
     @Test
@@ -221,5 +420,10 @@ public class MainTest {
     public void divTest() {
         int a = 10 / 2;
         assertEquals(a, 5, "Div is not OK");
+    }
+
+    @Test
+    public void fooBar() {
+        this.<IllegalArgumentException>unchecked(new Exception("hello!"));
     }
 }
