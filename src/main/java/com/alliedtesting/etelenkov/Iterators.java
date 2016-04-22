@@ -29,12 +29,12 @@ public class Iterators {
         arrOfIt.add(primeIntegers(take(getNonNegativeIntegersIterator(), 16)));
         arrOfIt.add(magicIntegers(take(getNonNegativeIntegersIterator(), 15)));
         // print initial iterators
-        print(arrOfIt.get(0));
-        print(arrOfIt.get(1));
-        print(arrOfIt.get(2));
+//        print(arrOfIt.get(0));
+//        print(arrOfIt.get(1));
+//        print(arrOfIt.get(2));
         // print created iterator
         Iterator<Integer> it = filter2(arrOfIt, (a, b) -> a <= b);
-        while (it.hasNext()) System.out.print(it.next());
+        while (it.hasNext()) System.out.print(it.next() + " ");
 
     }
 
@@ -152,22 +152,37 @@ public class Iterators {
         return map(it, a -> a * a);
     }
 
-    public static <T, E> Iterator<T> map(Iterator<E> it, Function<? super E, T> f) {
-        return new Iterator<T>() {
+    public static <E, R> Iterator<R> map(Iterator<E> it, Function<? super E, R> f) {
+        return new Iterator<R>() {
             @Override
             public boolean hasNext() {
                 return it.hasNext();
             }
 
             @Override
-            public T next() {
+            public R next() {
                 return f.apply(it.next());
             }
         };
     }
 
     public static Integer min(Iterator<Integer> it) {
-        return reduce(it, (a, b) -> a < b ? a : b);
+        return min(it, (a, b) -> a.compareTo(b) <= 0);
+    }
+
+    /**
+     * @param it         Iterator of elements of type <T> to compare
+     * @param comparator Comparator function with two elements of Iterator's
+     *                   sequence (e1, e2) as parameters: returns boolean:
+     *                   true - if a pare of elements (e1, e1) are in the right order
+     *                   false - if a pare of elements (e1, e2) are in the wrong order
+     * @param <T>        Type of elements of iterator's sequence
+     * @return Minimal element of type <T> of iterator's sequence after comparison
+     * (after this function return Iterator is empty)
+     * @throws NoSuchElementException if the iteration has no elements
+     */
+    public static <T> T min(Iterator<T> it, BiPredicate<? super T, ? super T> comparator) {
+        return reduce2(it, (a, b) -> comparator.test(a, b) ? a : b, it.next());
     }
 
     public static Integer max(Iterator<Integer> it) {
@@ -192,8 +207,8 @@ public class Iterators {
         return res;
     }
 
-    public static <T, E> E reduce2(Iterator<T> it, BiFunction<E, T, E> bf, E initial) {
-        E res = initial;
+    public static <T, R> R reduce2(Iterator<T> it, BiFunction<R, T, R> bf, R initial) {
+        R res = initial;
         while (it.hasNext()) {
             res = bf.apply(res, it.next());
         }
@@ -204,6 +219,7 @@ public class Iterators {
         return reduce2(it, (a, b) -> (a == null) ? b : bf.apply(a, b), null);
     }
 
+
     public static <T> List<T> toList(Iterator<T> it) {
         return reduce2(it, (a, b) -> {
             a.add(b);
@@ -213,56 +229,28 @@ public class Iterators {
 
     /**
      * @param collOfIt
-     * @param p        should return true if 1 and 2nd parameters in the right order, otherwise - false
+     * @param comparator should return true if 1 and 2nd parameters in the right order, otherwise - false
      * @param <T>
      * @return
      */
-    public static <T> Iterator<T> filter2(Collection<Iterator<T>> collOfIt, BiPredicate<? super T, ? super T> p) {
+    public static <T> Iterator<T> filter2(Collection<Iterator<T>> collOfIt, BiPredicate<? super T, ? super T> comparator) {
         return new Iterator<T>() {
             // array of LookAheadIterator's of initial iterators
-            private ArrayList<LookAheadIterator<T>> iterators = new ArrayList<>();
-
-            // initialization block
-            {
-                for (Iterator<T> it : collOfIt) iterators.add(new LookAheadIterator<T>(it));
-            }
+            private List<LookAheadIterator<T>> iterators =
+                    toList(map(collOfIt.iterator(), LookAheadIterator::new));
 
             @Override
             public boolean hasNext() {
-                boolean hasNextFlag = false;
-
-                for (int i = 0; i < iterators.size(); i++) {
-                    if (iterators.get(i).hasNext()) hasNextFlag = true;
-                    else {
-                        iterators.remove(i); // removing empty iterator from the list
-                        // decrease counter i because of removal current element
-                        // (we need to check this index again, because now here the next element or nothing)
-                        i--; // todo: may be added to previous command as iterators.remove(i--); ???
-                    }
-                }
-
-                return hasNextFlag;
+                return filter(iterators.iterator(), LookAheadIterator::hasNext).hasNext();
             }
 
             @Override
             public T next() {
-                if (hasNext()) {
-                    // Find index of needed iterator with the next element
-                    // with help of given BiPredicate testing (if returns false - then
-                    int neededInd = 0; // element with index 0 is always here because hasNext() is true
-                    for (int i = 1; i < iterators.size(); i++)
-                        if (!p.test(iterators.get(neededInd).peek(), iterators.get(i).peek()))
-                            neededInd = i;
-                    // Return needed element of needed iterator
-                    return iterators.get(neededInd).next();
-                }
-
-                // Throw NoSuchElementException if there is no more elements in the iterators
-                throw new NoSuchElementException();
+                return min(filter(iterators.iterator(), LookAheadIterator::hasNext),
+                        (a, b) -> comparator.test(a.peek(), b.peek())).next();
             }
         };
     }
-
 }
 
 class LookAheadIterator<T> implements Iterator<T> {
@@ -292,15 +280,6 @@ class LookAheadIterator<T> implements Iterator<T> {
     public boolean hasNext() {
         return peeked || initial.hasNext();
     }
-
-//    @Override
-//    public T next() {
-//        if (peeked) {
-//            peeked = false; // after return of next, a peeked element will be the other one
-//            return next;
-//        }
-//        return initial.next();
-//    }
 
     @Override
     public T next() {
