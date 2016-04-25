@@ -6,36 +6,49 @@ import java.util.function.*;
 public class Iterators {
     public static void main(String[] args) {
 
-        //System.out.println(sum(take(getNonNegativeIntegersIterator(), 11)));
+//        ArrayList<Iterator<Integer>> arrOfIt = new ArrayList<>();
+//        arrOfIt.add(take(getNonNegativeIntegersIterator(), 5));
+//        arrOfIt.add(primeIntegers(take(getNonNegativeIntegersIterator(), 16)));
+//        arrOfIt.add(magicIntegers(take(getNonNegativeIntegersIterator(), 15)));
 
-//        System.out.println(toList(take(getNonNegativeIntegersIterator(), 11)));
-//
-//        LookAheadIterator it = new LookAheadIterator(take(getNonNegativeIntegersIterator(), 11));
-//        while (it.hasNext()) {
-//            if (it.hasNext()) System.out.print(" peek: " + it.peek());
-//            System.out.print(" next: " + it.next());
-//            if (it.hasNext()) System.out.print(" peek: " + it.peek());
-//            System.out.println();
-//        }
 
-        //        System.out.println(reduce2(take(getNonNegativeIntegersIterator(), 20),
-//                (a, b) -> {
-//                    a.add(b);
-//                    return a;
-//                }, new ArrayList<Integer>()));
+        List<Integer> list =
+                Arrays.asList(0, 0, 0, 1, 2, 3, 3, 4, 5, 6, 9, 10, 12, 15);
+        Integer res = list.stream()
+                .filter(e -> e % 3 == 0)
+                .map(e -> e == 3 ? 100 : e)
+                .reduce((e, r) -> r + e)
+                .get();
+        System.out.println(res); //242
 
-        ArrayList<Iterator<Integer>> arrOfIt = new ArrayList<>();
-        arrOfIt.add(take(getNonNegativeIntegersIterator(), 5));
-        arrOfIt.add(primeIntegers(take(getNonNegativeIntegersIterator(), 16)));
-        arrOfIt.add(magicIntegers(take(getNonNegativeIntegersIterator(), 15)));
-        // print initial iterators
-//        print(arrOfIt.get(0));
-//        print(arrOfIt.get(1));
-//        print(arrOfIt.get(2));
-        // print created iterator
-        Iterator<Integer> it = filter2(arrOfIt, (a, b) -> a <= b);
-        while (it.hasNext()) System.out.print(it.next() + " ");
+    }
 
+
+    public static Runnable getRunnable1() {
+        return new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Runnable1 (use anonymous)");
+            }
+        };
+    }
+
+    public static Runnable getRunnable2() {
+        return () -> System.out.println("Runnable2 (lambda)");
+    }
+
+    public static Runnable getRunnable3() {
+        String s = "closure";
+        return () -> System.out.println("Runnable3 (lambda with closure): " + s);
+    }
+
+    public static <T> Supplier<Runnable> getRunnable4(String message) {
+        return new Supplier<Runnable>() {
+            @Override
+            public Runnable get() {
+                return () -> System.out.println(message);
+            }
+        };
     }
 
     public static Iterator<Integer> getNonNegativeIntegersIterator() {
@@ -236,17 +249,17 @@ public class Iterators {
     public static <T> Iterator<T> filter2(Collection<Iterator<T>> collOfIt, BiPredicate<? super T, ? super T> comparator) {
         return new Iterator<T>() {
             // array of LookAheadIterator's of initial iterators
-            private List<LookAheadIterator<T>> iterators =
+            private List<LookAheadIterator<T>> lookAheadIt =
                     toList(map(collOfIt.iterator(), LookAheadIterator::new));
 
             @Override
             public boolean hasNext() {
-                return filter(iterators.iterator(), LookAheadIterator::hasNext).hasNext();
+                return filter(lookAheadIt.iterator(), LookAheadIterator::hasNext).hasNext();
             }
 
             @Override
             public T next() {
-                return min(filter(iterators.iterator(), LookAheadIterator::hasNext),
+                return min(filter(lookAheadIt.iterator(), LookAheadIterator::hasNext),
                         (a, b) -> comparator.test(a.peek(), b.peek())).next();
             }
         };

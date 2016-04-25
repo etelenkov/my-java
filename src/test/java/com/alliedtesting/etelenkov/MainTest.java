@@ -4,10 +4,12 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.util.*;
+import java.util.function.BiPredicate;
+import java.util.function.Supplier;
 
+import static com.alliedtesting.etelenkov.Iterators.*;
 import static java.util.Arrays.asList;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.fail;
+import static org.testng.Assert.*;
 
 public class MainTest {
     public static void main(String... args) {
@@ -148,8 +150,13 @@ public class MainTest {
             this.lastName = lastName;
         }
 
-        public String firstName() { return firstName; }
-        public String lastName()  { return lastName;  }
+        public String firstName() {
+            return firstName;
+        }
+
+        public String lastName() {
+            return lastName;
+        }
 
         public boolean equals(Object o) {
             if (!(o instanceof Name))
@@ -159,7 +166,7 @@ public class MainTest {
         }
 
         public int hashCode() {
-            return 31*firstName.hashCode() + lastName.hashCode();
+            return 31 * firstName.hashCode() + lastName.hashCode();
         }
 
         public String toString() {
@@ -425,5 +432,82 @@ public class MainTest {
     @Test
     public void fooBar() {
         this.<IllegalArgumentException>unchecked(new Exception("hello!"));
+    }
+
+    @Test
+    public void runnable1Test() {
+        Runnable o1 = getRunnable1();
+        Runnable o2 = getRunnable1();
+        assertNotSame(o1, o2, "getRunnable1() returned two objects of the same instance. Test Failed!");
+    }
+
+    @Test
+    public void runnable2Test() {
+        Runnable o1 = getRunnable2();
+        Runnable o2 = getRunnable2();
+        // two lambdas with enclosure should be different objects
+        assertSame(o1, o2, "getRunnable2() returned two objects of different instances. Test Failed!");
+    }
+
+    @Test
+    public void runnable3Test() {
+        Runnable o1 = getRunnable3();
+        Runnable o2 = getRunnable3();
+        // two lambdas with enclosure should be different objects
+        assertNotSame(o1, o2, "getRunnable3() returned two objects of the same instance. Test Failed!");
+    }
+
+    @Test
+    public void runnable4Test() {
+        Supplier<Runnable> asdf = getRunnable4("asdf");
+        Runnable o1 = asdf.get();
+        Runnable o2 = asdf.get();
+        // two lambdas with enclosure should be different objects
+        assertNotSame(o1, o2);
+    }
+
+    @Test
+    public void iteratorsFilter2_1Test() {
+        // Create collection of iterators
+        ArrayList<Iterator<Integer>> arrOfIt = new ArrayList<>();
+        arrOfIt.add(Arrays.asList(0, 1, 2, 3, 4).iterator());
+        arrOfIt.add(Arrays.asList(0, 3, 6, 9, 12, 15).iterator());
+        arrOfIt.add(Arrays.asList(0, 5, 10).iterator());
+
+        // Create comparator
+        BiPredicate<Integer, Integer> comparator = (a, b) -> a <= b;
+
+        // Create expecting iterator
+        List<Integer> exp = Arrays.asList(0, 0, 0, 1, 2, 3, 3, 4, 5, 6, 9, 10, 12, 155);
+
+        // Get result iterator
+        List<Integer> res = toList(filter2(arrOfIt, (a, b) -> a <= b));
+
+        // Check the results
+        assertEquals((Object)res, (Object)exp, "Iterators.filter2(...) FAILED!");
+    }
+
+    @Test
+    public void iteratorsFilter2_2Test() {
+        // Create collection of iterators
+        ArrayList<Iterator<Integer>> arrOfIt = new ArrayList<>();
+        arrOfIt.add(Arrays.asList(1, 1, 2, 3, 4).iterator());
+        arrOfIt.add(Arrays.asList(0, 3, 6, 9, 12, 15).iterator());
+        arrOfIt.add(Arrays.asList(0, 5, 10).iterator());
+
+        // Create comparator
+        BiPredicate<Integer, Integer> comparator = (a, b) -> a <= b;
+
+        // Create expecting iterator
+        List<Integer> exp = Arrays.asList(0, 0, 0, 1, 2, 3, 3, 4, 5, 6, 9, 10, 12, 15);
+
+        // Get result iterator
+        List<Integer> res = toList(filter2(arrOfIt, (a, b) -> a <= b));
+
+        // Check the results
+        assertEquals(res, exp,
+                "Iterators.filter2(...) FAILED!" +
+                        "\nexpected: " + exp.toString() +
+                        "\nactual:   " + res.toString() + "\n");
     }
 }
