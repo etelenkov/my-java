@@ -481,7 +481,7 @@ public class MainTest {
         List<Integer> exp = Arrays.asList(0, 0, 0, 1, 2, 3, 3, 4, 5, 6, 9, 10, 12, 155);
 
         // Get result iterator
-        List<Integer> res = toList(filter2(arrOfIt, (a, b) -> a <= b));
+        List<Integer> res = toList(filter2(arrOfIt, comparator));
 
         // Check the results
         assertEquals((Object)res, (Object)exp, "Iterators.filter2(...) FAILED!");
@@ -490,24 +490,21 @@ public class MainTest {
     @Test
     public void iteratorsFilter2_2Test() {
         // Create collection of iterators
-        ArrayList<Iterator<Integer>> arrOfIt = new ArrayList<>();
-        arrOfIt.add(Arrays.asList(1, 1, 2, 3, 4).iterator());
-        arrOfIt.add(Arrays.asList(0, 3, 6, 9, 12, 15).iterator());
-        arrOfIt.add(Arrays.asList(0, 5, 10).iterator());
+        ArrayList<Iterator<String>> arrOfIt = new ArrayList<>();
+        arrOfIt.add(Arrays.asList("B", "B", "C", "Y").iterator());
+        arrOfIt.add(Arrays.asList("F", "X", "Z").iterator());
+        arrOfIt.add(Arrays.asList("A", "Q", "S", "V", "W").iterator());
 
         // Create comparator
-        BiPredicate<Integer, Integer> comparator = (a, b) -> a <= b;
+        BiPredicate<String, String> comparator = (a, b) -> a.compareTo(b) <= 0;
 
         // Create expecting iterator
-        List<Integer> exp = Arrays.asList(0, 0, 0, 1, 2, 3, 3, 4, 5, 6, 9, 10, 12, 15);
+        List<String> exp = Arrays.asList("A", "B", "B", "C", "F", "Q", "S", "V", "W", "X", "Y", "Z");
 
         // Get result iterator
-        List<Integer> res = toList(filter2(arrOfIt, (a, b) -> a <= b));
+        List<String> res = toList(filter2(arrOfIt, comparator));
 
         // Check the results
-        assertEquals(res, exp,
-                "Iterators.filter2(...) FAILED!" +
-                        "\nexpected: " + exp.toString() +
-                        "\nactual:   " + res.toString() + "\n");
+        assertEquals((Object)res, (Object)exp, "Iterators.filter2(...) FAILED!");
     }
 }
