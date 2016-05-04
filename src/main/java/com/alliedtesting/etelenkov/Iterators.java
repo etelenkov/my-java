@@ -2,6 +2,67 @@ package com.alliedtesting.etelenkov;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.Collectors;
+
+
+class Foo extends Person {
+    private final static Foo INSTANCE = new Foo();
+
+    private Foo() {
+        System.out.println();
+    }
+
+    public static Foo getInstance() {
+        return INSTANCE;
+    }
+
+    private final Object finalizeGuardian = new Object() {
+        protected void finalize() throws Throwable {
+            System.out.println("Finilize Guardian: making internal finalizations...");
+
+            System.out.println("Finilize Guardian: colling super.finilize() ...");
+            super.finalize();
+
+            System.out.println("Finilize Guardian: done all the job!");
+        }
+    };
+
+
+}
+
+class Person {
+    String firstName;
+    String lastName;
+    int yearOfBirth;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Person person = (Person) o;
+
+        if (yearOfBirth != person.yearOfBirth) return false;
+        if (firstName != null ? !firstName.equals(person.firstName) : person.firstName != null) return false;
+        return lastName != null ? lastName.equals(person.lastName) : person.lastName == null;
+
+    }
+
+    public Person() {
+        int i = 123;
+        Integer a = 42;
+        i++;
+        System.out.println("Person");
+    }
+
+    @Override
+    public int hashCode() {
+        int result = firstName != null ? firstName.hashCode() : 0;
+        result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
+        result = 31 * result + yearOfBirth;
+        return result;
+    }
+}
 
 public class Iterators {
     public static void main(String[] args) {
@@ -11,15 +72,31 @@ public class Iterators {
 //        arrOfIt.add(primeIntegers(take(getNonNegativeIntegersIterator(), 16)));
 //        arrOfIt.add(magicIntegers(take(getNonNegativeIntegersIterator(), 15)));
 
+        Person o1 = Foo.getInstance();
+        Person o2 = new Person();
+
+        Object o = o1;
+
+        System.out.println(o.getClass());
+        System.out.println(o instanceof Collections);
+
+        System.out.println(o1 == o2);
+        System.out.println("getClass(): " + (o1.getClass() == o2.getClass()));
+        System.out.println("instanceof: " + (o1 instanceof Foo));
 
         List<Integer> list =
                 Arrays.asList(0, 0, 0, 1, 2, 3, 3, 4, 5, 6, 9, 10, 12, 15);
         Integer res = list.stream()
                 .filter(e -> e % 3 == 0)
                 .map(e -> e == 3 ? 100 : e)
-                .reduce((e, r) -> r + e)
-                .get();
+                .reduce(0, (e, r) -> r + e);
         System.out.println(res); //242
+
+        List<Integer> res1 = list.stream()
+                .filter(e -> e % 3 == 0)
+                .map(e -> e == 3 ? 100 : e)
+                .collect(Collectors.toList());
+        System.out.println(res1);
 
     }
 

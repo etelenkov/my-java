@@ -1,10 +1,14 @@
 package com.alliedtesting.etelenkov;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 interface MySet {
     void add(Object o);
     void addAll(Collection c);
+    default public void addIfAbsent(Object o) {
+
+    }
 }
 
 class MySetImpl implements MySet {
@@ -16,9 +20,10 @@ class MySetImpl implements MySet {
     @Override
     public void addAll(Collection c) {
         System.out.println("Calling MySetImpl.addAll");
+        for (Object e : c) add(e);
     }
 
-    public void addIfAbsent(Object o ) {
+    public void addIfAbsent(Object o) {
         System.out.println("Calling MySetImpl.addIfAbsent");
     }
 }
@@ -34,9 +39,11 @@ final class MyInstrumentedSetBad extends MySetImpl {
 
     @Override
     public void addAll(Collection c) {
-        for (Object e : c) {
-            add(e);
-        }
+        super.addAll(c);
+        count += c.size();
+//        for (Object e : c) {
+//            add(e);
+//        }
     }
 
     public int getCount() {
@@ -83,5 +90,16 @@ final class MyInstrumentedSetGood extends MySetWrapper {
 
     public int getCount() {
         return count;
+    }
+
+    public static void main(String... args) {
+        MyInstrumentedSetBad b = new MyInstrumentedSetBad();
+        b.addAll(Arrays.asList("1", "2", "3"));
+        System.out.println(b.getCount());
+
+        MyInstrumentedSetGood g = new MyInstrumentedSetGood(new MySetImpl());
+        g.addIfAbsent(null);
+        g.addAll(Arrays.asList("1", "2", "3"));
+        System.out.println(g.getCount());
     }
 }
